@@ -1,0 +1,25 @@
+{
+  "name": "code-review-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhinayyjat/code-review-platform.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhinayyjat/code-review-platform/issues"
+  },
+  "homepage": "https://github.com/abhinayyjat/code-review-platform#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
