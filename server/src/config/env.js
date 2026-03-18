@@ -38,13 +38,14 @@ module.exports = {
     callbackUrl: process.env.GITHUB_CALLBACK_URL,
   },
   // Update the redis section in env.js:
-redis: {
+  redis: {
   url:   process.env.REDIS_URL,
   token: process.env.REDIS_TOKEN,
 },
 
 
-  gemini: { apiKey: process.env.GEMINI_API_KEY },
+// Add to module.exports:
+  groq: { apiKey: process.env.GROQ_API_KEY }, 
   redis: { url: process.env.REDIS_URL || "redis://localhost:6379" },
   email: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
   webhook: { secret: process.env.WEBHOOK_SECRET },

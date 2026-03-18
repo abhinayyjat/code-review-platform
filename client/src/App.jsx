@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
-import TeamsPage from './pages/TeamsPage';
+import TeamsPage from "./pages/TeamsPage";
 // import { Dashboard } from "./pages/Dashboard";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -14,6 +14,14 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route
+          path="/teams"
+          element={
+            <ProtectedRoute>
+              <TeamsPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/analytics"
           element={
