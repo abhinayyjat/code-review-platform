@@ -6,3 +6,4 @@ npm-debug.log
 .git
 *.test.js
 test-review.js
+.env.docker
