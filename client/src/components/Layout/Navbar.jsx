@@ -17,6 +17,7 @@ export default function Navbar() {
     { to: '/review',    label: 'Review'  },
     { to: '/history',   label: 'History' },
     { to: '/analytics', label: 'Analytics' },
+    { to: '/teams', label: 'Teams' },
   ];
 
   return (
