@@ -1,10 +1,26 @@
 'use strict';
 require('dotenv').config();
 
-const app = require('./app');
-const PORT = parseInt(process.env.PORT, 10) || 5000;
+const { validateEnv, server } = require('./config/env');
+validateEnv();
 
-app.listen(PORT, function(){
-    console.log('[Server] Running on port ' + PORT);
-})
+const http      = require('http');
+const connectDB = require('./config/db');
+const app       = require('./app');
+const sockets   = require('./sockets');
 
+async function start() {
+  await connectDB();
+
+  var httpServer = http.createServer(app);
+  sockets.init(httpServer);  // initialize Socket.io with raw http server
+
+  httpServer.listen(server.port, function() {
+    console.log('[Server] Port ' + server.port + ' (' + server.nodeEnv + ')');
+  });
+}
+
+start().catch(function(err) {
+  console.error('[Server] Failed to start: ' + err.message);
+  process.exit(1);
+});
