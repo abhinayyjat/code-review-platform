@@ -33,7 +33,7 @@ export default function Login() {
         AI-powered code reviews, instantly
       </p>
       <a
-        href="http://localhost:5000/api/auth/github"
+        href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/github`}
         style={{
           background: "#238636",
           color: "#fff",
