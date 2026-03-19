@@ -1,10 +1,13 @@
 'use strict';
-const Groq   = require('groq-sdk');
 const Review = require('../models/Review');
 const { groq: groqCfg } = require('../config/env');
 const { REVIEW_SYSTEM_PROMPT, buildUserMessage } = require('../utils/prompts');
 
-const client = new Groq({ apiKey: groqCfg.apiKey });
+// Lazy initialization — only create client when actually needed
+function getClient() {
+  const Groq = require('groq-sdk');
+  return new Groq({ apiKey: groqCfg.apiKey });
+}
 
 exports.runReview = async function(userId, code, language) {
   var review = await Review.create({
@@ -15,8 +18,9 @@ exports.runReview = async function(userId, code, language) {
   });
 
   try {
+    var client   = getClient();
     var response = await client.chat.completions.create({
-      model:       'llama-3.3-70b-versatile',  // best free model on Groq
+      model:       'llama-3.3-70b-versatile',
       temperature: 0.2,
       max_tokens:  1500,
       messages: [
@@ -37,7 +41,6 @@ exports.runReview = async function(userId, code, language) {
     review.result = result;
     review.status = 'done';
     await review.save();
-
     return review;
 
   } catch (err) {

@@ -20,34 +20,25 @@ function validateEnv() {
 module.exports = {
   validateEnv,
   server: {
-    port: parseInt(process.env.PORT, 10) || 5000,
-    nodeEnv: process.env.NODE_ENV || "development",
-    isDev: (process.env.NODE_ENV || "development") === "development",
+    port:      parseInt(process.env.PORT, 10) || 5000,
+    nodeEnv:   process.env.NODE_ENV || "development",
+    isDev:     (process.env.NODE_ENV || "development") === "development",
     clientUrl: process.env.CLIENT_URL || "http://localhost:5173",
   },
-  db: { uri: process.env.MONGODB_URI },
+  db:  { uri: process.env.MONGODB_URI },
   jwt: {
-    secret: process.env.JWT_SECRET,
+    secret:        process.env.JWT_SECRET,
     refreshSecret: process.env.JWT_REFRESH_SECRET,
-    accessExpiry: "15m",
+    accessExpiry:  "15m",
     refreshExpiry: "7d",
   },
   github: {
-    clientId: process.env.GITHUB_CLIENT_ID,
+    clientId:     process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackUrl: process.env.GITHUB_CALLBACK_URL,
+    callbackUrl:  process.env.GITHUB_CALLBACK_URL,
   },
-  // Update the redis section in env.js:
-  redis: {
-  url:   process.env.REDIS_URL,
-  token: process.env.REDIS_TOKEN,
-},
-
-
-// Add to module.exports:
-  groq: { apiKey: process.env.GROQ_API_KEY }, 
-  redis: { url: process.env.REDIS_URL || "redis://localhost:6379" },
-  email: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  groq:    { apiKey: process.env.GROQ_API_KEY },
+  redis:   { url: process.env.REDIS_URL, token: process.env.REDIS_TOKEN },
+  email:   { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
   webhook: { secret: process.env.WEBHOOK_SECRET },
-
 };
