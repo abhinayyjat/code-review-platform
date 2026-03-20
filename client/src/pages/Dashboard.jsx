@@ -19,7 +19,7 @@ export default function Dashboard() {
         <h1 style={{ color:'#e2e8f0', fontSize:28, fontWeight:700 }}>
           Welcome, {user ? user.username : '...'}! 👋
         </h1>
-        <p style={{ color:'#6b7280', marginTop:8 }}>Dashboard coming in Hour 8.</p>
+        <p style={{ color:'#6b7280', marginTop:8 }}></p>
         <Link to="/review" style={{ color:'#818CF8', marginTop:16, display:'block' }}>
           → Go to Code Review
         </Link>
