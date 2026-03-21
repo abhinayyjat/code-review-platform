@@ -42,28 +42,33 @@ export default function ReviewPage() {
     };
   }, []);
 
-  async function handleSubmit() {
-    if (!code.trim()) return;
-    setLoading(true);
-    setError('');
-    setReview(null);
+async function handleSubmit() {
+  if (!code.trim()) return;
+  setLoading(true);
+  setError('');
+  setReview(null);
+  setStreamText('');
+  try {
+    var res = await api.post('/api/reviews', {
+      code:     code,
+      language: language,
+      socketId: socketRef.current ? socketRef.current.id : null,
+    });
+    // Use HTTP response directly — don't wait for socket event
+    // Socket streaming is a bonus if it works, not required for result
+    setReview(res.data);
     setStreamText('');
-    try {
-      await api.post('/api/reviews', {
-        code:     code,
-        language: language,
-        socketId: socketRef.current ? socketRef.current.id : null,
-      });
-    } catch (err) {
-      if (err.response && err.response.status === 429) {
-        var retryMins = Math.ceil(err.response.data.retryAfter / 60);
-        setError('Review limit reached. Try again in ' + retryMins + ' minutes.');
-      } else {
-        setError(err.response ? err.response.data.error : 'Something went wrong');
-      }
-      setLoading(false);
+    setLoading(false);
+  } catch (err) {
+    if (err.response && err.response.status === 429) {
+      var retryMins = Math.ceil(err.response.data.retryAfter / 60);
+      setError('Review limit reached. Try again in ' + retryMins + ' minutes.');
+    } else {
+      setError(err.response ? err.response.data.error : 'Something went wrong');
     }
+    setLoading(false);
   }
+}
 
   return (
     <ErrorBoundary>
