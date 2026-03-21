@@ -1,15 +1,14 @@
 'use strict';
-const Review = require('../models/Review');
+const Review  = require('../models/Review');
 const { groq: groqCfg } = require('../config/env');
 const { REVIEW_SYSTEM_PROMPT, buildUserMessage } = require('../utils/prompts');
 
-// Lazy initialization — only create client when actually needed
 function getClient() {
   const Groq = require('groq-sdk');
   return new Groq({ apiKey: groqCfg.apiKey });
 }
 
-exports.runReview = async function(userId, code, language) {
+exports.runReview = async function(userId, code, language, socketId) {
   var review = await Review.create({
     userId:   userId,
     code:     code,
@@ -18,6 +17,16 @@ exports.runReview = async function(userId, code, language) {
   });
 
   try {
+    // Get socket if socketId provided
+    var socket = null;
+    try {
+      var sockets = require('../sockets');
+      var io      = sockets.getIO();
+      socket = socketId ? io.sockets.sockets.get(socketId) : null;
+    } catch(_) {}
+
+    if (socket) socket.emit('review:start', { reviewId: review._id });
+
     var client   = getClient();
     var response = await client.chat.completions.create({
       model:       'llama-3.3-70b-versatile',
@@ -30,6 +39,15 @@ exports.runReview = async function(userId, code, language) {
     });
 
     var rawText  = response.choices[0].message.content.trim();
+
+    // Simulate streaming — emit word by word
+    var words = rawText.split(' ');
+    for (var i = 0; i < words.length; i++) {
+      if (socket) socket.emit('review:chunk', { chunk: words[i] + ' ' });
+      // small delay for visual effect
+      await new Promise(function(r) { setTimeout(r, 15); });
+    }
+
     var jsonText = rawText
       .replace(/^```json\s*/i, '')
       .replace(/^```\s*/i, '')
@@ -41,11 +59,21 @@ exports.runReview = async function(userId, code, language) {
     review.result = result;
     review.status = 'done';
     await review.save();
+
+    if (socket) socket.emit('review:done', { review: review });
+
     return review;
 
   } catch (err) {
     review.status = 'failed';
     await review.save();
+    if (socketId) {
+      try {
+        var sockets = require('../sockets');
+        sockets.getIO().sockets.sockets.get(socketId)
+          ?.emit('review:error', { message: err.message });
+      } catch(_) {}
+    }
     throw err;
   }
 };
